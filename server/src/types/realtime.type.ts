@@ -14,7 +14,7 @@ export type AudioEvent = {
 export type RealtimeAPIEvent = {
   event_id: string;
   type: string;
-  session: {
+  session?: {
     modalities: ('text' | 'audio')[];
     instructions: string;
     voice: 'sage';
@@ -32,5 +32,38 @@ export type RealtimeAPIEvent = {
     tool_choice: 'auto';
     temperature: number;
     max_response_output_tokens: 'inf' | number;
+  };
+  response?: {
+    status: 'completed' | 'cancelled' | 'failed' | 'incomplete';
+    status_details: Record<string, unknown> | null;
+    output: {
+      id: string;
+      object: string;
+      type: string;
+      status: string;
+      role: string;
+      content: {
+        type: string;
+        text: string;
+      }[];
+    }[];
+    usage: {
+      total_tokens: number;
+      input_tokens: number;
+      output_tokens: number;
+      input_token_details: {
+        cached_tokens: number;
+        text_tokens: number;
+        audio_tokens: number;
+        cached_tokens_details: {
+          text_tokens: number;
+          audio_tokens: number;
+        };
+      };
+      output_token_details: {
+        text_tokens: number;
+        audio_tokens: number;
+      };
+    };
   };
 };

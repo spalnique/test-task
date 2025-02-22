@@ -57,19 +57,28 @@ export default class RealtimeAPIConnection {
 
   private handleOpenAIMessage(event: WebSocket.RawData) {
     try {
-      const parsedEvent = JSON.parse(event.toString('utf-8'));
-      console.log('OpenAI message:', parsedEvent);
+      const parsedEvent = JSON.parse(
+        event.toString('utf-8')
+      ) as RealtimeAPIEvent;
 
-      if (parsedEvent.type === 'session.updated') {
-        console.log('OpenAI message: session config updated');
+      switch (parsedEvent.type) {
+        case 'session.updated':
+          console.log('OpenAI message: session config updated');
+          this.client_ws.send('ready');
+          break;
 
-        this.client_ws.send('ready');
-      }
+        case 'response.done':
+          console.log('OpenAI message: response done');
 
-      if (parsedEvent.type === 'response.done') {
-        console.log('OpenAI message: response done');
+          const message = parsedEvent.response.output[0].content[0].text;
+          console.log('Response:', message);
 
-        this.client_ws.send(JSON.stringify(parsedEvent));
+          this.client_ws.send(JSON.stringify(message));
+          break;
+
+        default:
+          console.log('OpenAI message:', parsedEvent);
+          break;
       }
     } catch (error) {
       console.error('Error handling OpenAI message:', error);
