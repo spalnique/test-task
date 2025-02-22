@@ -15,7 +15,6 @@
     "cors": "latest",
     "dotenv": "^16.4.5",
     "module-alias": "^2.2.3",
-    "openai": "^4.85.3",
     "ws": "^8.18.0"
   },
   "devDependencies": {
