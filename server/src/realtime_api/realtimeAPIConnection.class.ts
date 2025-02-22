@@ -22,7 +22,6 @@ export default class RealtimeAPIConnection {
   private connect(config: RealtimeAPIConfig) {
     this.openai_ws = new WebSocket(RealtimeAPIConnection.url, config);
 
-    this.stream = audioTransformStream(this.openai_ws);
     this.setupEventHandlers();
   }
 
@@ -64,6 +63,7 @@ export default class RealtimeAPIConnection {
       switch (parsedEvent.type) {
         case 'session.updated':
           console.log('OpenAI message: session config updated');
+          this.stream = audioTransformStream(this.openai_ws);
           this.client_ws.send('ready');
           break;
 
