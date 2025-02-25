@@ -1,5 +1,5 @@
 export type {
   RealtimeAPIConfig,
-  AudioEvent,
-  RealtimeAPIEvent,
+  ClientRealtimeEvent,
+  ServerRealtimeEvent,
 } from './realtime.type';

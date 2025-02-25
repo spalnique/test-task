@@ -1,29 +1,28 @@
-import { RealtimeAPIConnection } from '@realtime_api';
-import { WebSocket, WebSocketServer } from 'ws';
+import fastifyWebsocket from '@fastify/websocket';
+import Fastify from 'fastify';
 
-import { realtimeAPIConfig, serverConfig } from '@config';
+import { serverConfig } from '@configs';
+import { RealtimeAPIService } from '@services';
 
-function handleConnection(ws: WebSocket) {
-  console.log('Client connected');
+const fastify_ws = Fastify();
 
-  try {
-    const connection = new RealtimeAPIConnection(ws, realtimeAPIConfig);
+fastify_ws.register(fastifyWebsocket);
+fastify_ws.register(async function (fastify) {
+  fastify.get('/', { websocket: true }, function (client_ws) {
+    console.log('Client connected');
 
-    ws.on('message', (chunk) => connection.handleClientMessage(chunk));
-    ws.on('close', () => {
-      console.log('Client disconnected');
-      connection.close();
-    });
-  } catch (error) {
-    console.error(error);
+    try {
+      new RealtimeAPIService(client_ws);
+    } catch (error) {
+      console.error('Error connection to OpenAI Realtime API', error);
+      client_ws.send('Error connection to OpenAI Realtime API');
+    }
+  });
+});
+
+fastify_ws.listen({ port: serverConfig.port }, (err) => {
+  if (err) {
+    fastify_ws.log.error(err);
+    process.exit(1);
   }
-}
-
-function handleListening() {
-  console.log('WebSocket server listening at', serverConfig.port);
-}
-
-const ws_server = new WebSocketServer(serverConfig);
-
-ws_server.on('listening', handleListening);
-ws_server.on('connection', handleConnection);
+});
