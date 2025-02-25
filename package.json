@@ -19,8 +19,5 @@
     "prettier": "^3.5.1",
     "prettier-plugin-css-order": "^2.1.2",
     "prettier-plugin-tailwindcss": "^0.6.11"
-  },
-  "dependencies": {
-    "uuid": "^11.1.0"
   }
 }
