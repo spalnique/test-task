@@ -52,8 +52,8 @@ export class RealtimeAPIService {
     this.realtime_ws.send(JSON.stringify(event));
   }
 
-  private sendToClient(message: string) {
-    this.client_ws.send(message);
+  private sendToClient(event: string) {
+    this.client_ws.send(event);
   }
 
   private onRealtimeOpen() {
@@ -61,8 +61,12 @@ export class RealtimeAPIService {
       type: 'session.update',
       session: {
         modalities: ['text'],
-        instructions: 'prompt',
-        max_response_output_tokens: 2048,
+        instructions:
+          "Be useful. Don't talk too much. Use Ukrainian or English language to answer. If you hear Слава Україні you should respond Героям слава!",
+        max_response_output_tokens: 1024,
+        input_audio_transcription: {
+          model: 'whisper-1',
+        },
         turn_detection: null,
       },
     });
@@ -70,28 +74,30 @@ export class RealtimeAPIService {
 
   private onRealtimeMessage(event: RawData) {
     try {
-      const parsedEvent = JSON.parse(
-        event.toString('utf-8')
-      ) as ServerRealtimeEvent;
+      const parsed = JSON.parse(event.toString('utf8')) as ServerRealtimeEvent;
 
-      switch (parsedEvent.type) {
+      switch (parsed.type) {
         case 'error':
-          console.error('Realtime API Error:', parsedEvent.error.message);
+          console.error('Realtime API Error:', parsed.error.message);
           break;
 
         case 'session.updated':
-          console.log('Realtime API:', parsedEvent.type);
+          console.log('Realtime API:', parsed.type);
           this.setupPipeline();
           this.sendToClient('OK');
           break;
 
         case 'response.done':
-          console.log('Realtime API:', parsedEvent.type);
-          this.sendToClient(parsedEvent.response.output[0].content[0].text);
+          console.log('Realtime API:', parsed.type);
+          this.sendToClient(parsed.response.output[0].content[0].text);
+          break;
+
+        case 'conversation.item.input_audio_transcription.completed':
+          console.log('Audio transcription:', parsed.transcription);
           break;
 
         default:
-          console.log('Realtime API:', parsedEvent.type);
+          console.log('Realtime API:', parsed.type);
           break;
       }
     } catch (error) {

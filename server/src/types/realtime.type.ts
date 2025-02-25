@@ -71,15 +71,14 @@ export type ServerRealtimeEvent = {
     | 'input_audio_buffer.cleared'
     | 'response.created'
     | 'response.done'
+    | 'response.audio_transcript.done'
     | 'response.text.delta'
-    | 'response.text.done';
-  error?: {
-    type: string;
-    code: string;
-    message: string;
-    param: null;
-    event_id: string;
-  };
+    | 'response.text.done'
+    | 'conversation.item.input_audio_transcription.completed';
+  item_id?: string;
+  response_id?: string;
+  delta?: string;
+  transcription?: string;
   session?: {
     id: string;
 
@@ -131,7 +130,11 @@ export type ServerRealtimeEvent = {
       };
     };
   };
-  response_id?: string;
-  item_id?: string;
-  delta?: string;
+  error?: {
+    type: string;
+    code: string;
+    message: string;
+    param: null;
+    event_id: string;
+  };
 };
