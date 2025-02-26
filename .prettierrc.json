@@ -11,8 +11,7 @@
   "proseWrap": "always",
   "plugins": [
     "@ianvs/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss",
-    "prettier-plugin-css-order"
+    "prettier-plugin-tailwindcss"
   ],
   "importOrder": [
     "<BUILTIN_MODULES>",
@@ -26,6 +25,5 @@
     "^@[a-zA-Z0-9]+$",
     "",
     "^[.]"
-  ],
-  "cssDeclarationSorterOrder": "smacss"
+  ]
 }
