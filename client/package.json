@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@heroui/react": "^2.7.2",
+    "@iconify/react": "^5.2.0",
     "@lottiefiles/dotlottie-react": "^0.13.0",
+    "@nextui-org/react": "^2.6.11",
     "framer-motion": "^12.4.5",
     "next": "15.1.7",
     "react": "^19.0.0",
