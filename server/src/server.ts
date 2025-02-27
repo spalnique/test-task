@@ -1,28 +1,45 @@
+import fastifyCors from '@fastify/cors';
 import fastifyWebsocket from '@fastify/websocket';
 import Fastify from 'fastify';
 
-import { serverConfig } from '@configs';
-import { RealtimeAPIService } from '@services';
+import { corsConfig, serverConfig } from '@configs';
+import {
+  errorHandlerPlugin,
+  mongoosePlugin,
+  notFoundPlugin,
+  routerPlugin,
+} from '@plugins';
 
-const fastify_ws = Fastify();
+(async () => {
+  const app = Fastify();
 
-fastify_ws.register(fastifyWebsocket);
-fastify_ws.register(async function (fastify) {
-  fastify.get('/', { websocket: true }, function (client_ws) {
-    console.log('Client connected');
+  await app.register(errorHandlerPlugin);
+  await app.register(fastifyCors, corsConfig);
+  await app.register(fastifyWebsocket);
+  await app.register(mongoosePlugin);
+  await app.register(routerPlugin);
+  await app.register(notFoundPlugin);
 
-    try {
-      new RealtimeAPIService(client_ws);
-    } catch (error) {
-      console.error('Error connection to OpenAI Realtime API', error);
-      client_ws.send('Error connection to OpenAI Realtime API');
+  await app.listen(serverConfig, (err) => {
+    if (err) {
+      console.log('Failed to start the server');
+      console.error(err);
+      app.log.error(err);
+      process.exit(1);
     }
   });
-});
 
-fastify_ws.listen({ port: serverConfig.port }, (err) => {
-  if (err) {
-    fastify_ws.log.error(err);
-    process.exit(1);
+  const address = app.server.address();
+
+  let url: string;
+
+  if (typeof address === 'string') {
+    url = address;
+  } else if (address?.address === '::') {
+    url = `http://localhost:${serverConfig.port}`;
+  } else {
+    url = `${address?.address}:${address?.port}`;
   }
-});
+
+  console.log(`Server is running at ${url}`);
+})();

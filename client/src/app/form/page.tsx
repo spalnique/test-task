@@ -93,7 +93,28 @@ export default function Component() {
       return;
     }
     setIsConfirmPasswordValid(true);
-    // Submit logic or API call here
+
+    fetch('http://localhost:4001/api/auth/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('success');
+        console.log(data);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+
     console.log(`Email: ${email}, Password: ${password}`);
   };
 

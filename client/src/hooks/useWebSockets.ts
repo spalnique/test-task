@@ -8,7 +8,7 @@ export const useWebSockets = (isConversation: boolean) => {
 
   useEffect(() => {
     if (isConversation) {
-      const ws = new WebSocket('ws://localhost:4001');
+      const ws = new WebSocket('ws://localhost:4001/');
 
       ws.onopen = () => console.log('Connected to WS server');
       ws.onerror = (err) => console.error('WebSocket error:', err);

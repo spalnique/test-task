@@ -1,8 +1,15 @@
 export const ENV_VARS = {
   OPENAI_API_KEY: 'OPENAI_API_KEY',
-  BUFFER_MAX_SIZE: 'BUFFER_MAX_SIZE',
+  MONGODB_URI: 'MONGODB_URI',
   PORT: 'PORT',
 };
 
 export const OPENAI_API_URL =
   'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-12-17';
+
+export enum ErrorMessage {
+  ROUTE_NOT_FOUND = 'Route not found',
+  INTERNAL_SERVER_ERROR = 'Something went wrong',
+  EMAIL_IN_USE = 'Email is already in use',
+  PASSWORD_TOO_SHORT = 'Password must have at least 8 characters',
+}
