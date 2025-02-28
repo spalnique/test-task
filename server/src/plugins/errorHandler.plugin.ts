@@ -1,9 +1,9 @@
 import { FastifyError, FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { isHttpError } from 'http-errors';
 
-import { ErrorMessage } from '@constants';
+import { ErrorMessages } from '@constants';
 
-const errorHandlerPlugin: FastifyPluginAsync = async (
+export const errorHandlerPlugin: FastifyPluginAsync = async (
   fastify: FastifyInstance
 ) => {
   fastify.setErrorHandler((err: FastifyError | Error, req, res) => {
@@ -18,9 +18,7 @@ const errorHandlerPlugin: FastifyPluginAsync = async (
 
     return res.status(500).send({
       status: 500,
-      message: ErrorMessage.INTERNAL_SERVER_ERROR,
+      message: ErrorMessages.INTERNAL_SERVER_ERROR,
     });
   });
 };
-
-export default errorHandlerPlugin;

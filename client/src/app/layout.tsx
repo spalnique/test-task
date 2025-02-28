@@ -5,6 +5,7 @@ import './globals.css';
 
 import Header from '@/components/Header';
 import Navigation from '@/components/Navigation';
+import { Toaster } from 'react-hot-toast';
 
 import Providers from './providers';
 
@@ -24,6 +25,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} h-dvh bg-[#121212] antialiased`}>
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: { width: 200, fontSize: 12 },
+            success: { duration: 3000 },
+            error: { duration: 5000 },
+          }}
+        />
         <Header>
           <Navigation />
         </Header>

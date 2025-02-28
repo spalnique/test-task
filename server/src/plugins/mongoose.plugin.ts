@@ -6,7 +6,7 @@ import { env } from '@utils';
 
 const uri = env(ENV_VARS.MONGODB_URI);
 
-const mongoosePlugin: FastifyPluginAsync = async () => {
+export const mongoosePlugin: FastifyPluginAsync = async () => {
   try {
     await mongoose.connect(uri);
     console.log('MongoDB connected successfully');
@@ -15,5 +15,3 @@ const mongoosePlugin: FastifyPluginAsync = async () => {
     process.exit(1);
   }
 };
-
-export default mongoosePlugin;

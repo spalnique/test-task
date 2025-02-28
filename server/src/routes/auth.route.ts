@@ -1,8 +1,8 @@
 import { FastifyInstance } from 'fastify';
 
 import { authController } from '@controllers';
-import { signupSchema } from '@schemas';
+import { signupSchema as schema } from '@schemas';
 
-export default async function authRoute(fastify: FastifyInstance) {
-  fastify.post('/signup', { schema: signupSchema }, authController.signup);
+export default async function authRoutes(fastify: FastifyInstance) {
+  fastify.post('/signup', { schema }, authController.signup);
 }

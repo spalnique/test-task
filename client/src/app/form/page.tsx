@@ -1,5 +1,6 @@
 'use client';
 
+import { signUpUser } from '@/lib/api/signup';
 import { Icon } from '@iconify/react';
 import { Button, Input, Link, Tooltip } from '@nextui-org/react';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
@@ -20,6 +21,7 @@ export default function Component() {
 
   const togglePasswordVisibility = () =>
     setIsPasswordVisible(!isPasswordVisible);
+
   const toggleConfirmPasswordVisibility = () =>
     setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
 
@@ -89,33 +91,11 @@ export default function Component() {
   const handleConfirmPasswordSubmit = () => {
     if (!confirmPassword.length || confirmPassword !== password) {
       setIsConfirmPasswordValid(false);
-
       return;
     }
     setIsConfirmPasswordValid(true);
 
-    fetch('http://localhost:4001/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log('success');
-        console.log(data);
-      })
-      .catch((err) => {
-        console.error(err);
-      });
-
-    console.log(`Email: ${email}, Password: ${password}`);
+    signUpUser({ email, password });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -137,7 +117,7 @@ export default function Component() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="rounded-large bg-content1 shadow-small flex w-full max-w-sm flex-col gap-4 overflow-hidden px-8 pb-10 pt-6">
+      <div className="rounded-large shadow-small dark flex w-full max-w-sm flex-col gap-4 overflow-hidden px-8 pb-10 pt-6">
         <LazyMotion features={domAnimation}>
           <m.div className="flex min-h-[40px] items-center gap-2 pb-2">
             <AnimatePresence initial={false} mode="popLayout">
@@ -234,17 +214,14 @@ export default function Component() {
                       type="button"
                       onClick={toggleConfirmPasswordVisibility}
                     >
-                      {isConfirmPasswordVisible ? (
-                        <Icon
-                          className="text-default-400 pointer-events-none text-2xl"
-                          icon="solar:eye-closed-linear"
-                        />
-                      ) : (
-                        <Icon
-                          className="text-default-400 pointer-events-none text-2xl"
-                          icon="solar:eye-bold"
-                        />
-                      )}
+                      <Icon
+                        className="text-default-400 pointer-events-none text-2xl"
+                        icon={
+                          isConfirmPasswordVisible
+                            ? 'solar:eye-closed-linear'
+                            : 'solar:eye-bold'
+                        }
+                      />
                     </button>
                   }
                   errorMessage={

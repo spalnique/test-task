@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const env = (name: string, defaultValue?: unknown) => {
+export const env = (name: string, defaultValue?: unknown) => {
   const value = process.env[name];
 
   if (value) return value;
@@ -11,5 +11,3 @@ const env = (name: string, defaultValue?: unknown) => {
 
   throw new Error(`Missing: process.env['${name}'].`);
 };
-
-export default env;

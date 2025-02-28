@@ -67,7 +67,12 @@ export class RealtimeAPIService {
         input_audio_transcription: {
           model: 'whisper-1',
         },
-        turn_detection: null,
+        turn_detection: {
+          prefix_padding_ms: 300,
+          silence_duration_ms: 500,
+          threshold: 0.5,
+          create_response: true,
+        },
       },
     });
   }

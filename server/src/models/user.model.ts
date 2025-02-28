@@ -18,7 +18,21 @@ const userSchema = new Schema<User>(
     },
   },
   {
+    id: true,
     timestamps: true,
+
+    methods: {
+      comparePassword: function (submittedPassword: string) {
+        return bcrypt.compare(submittedPassword, this.password);
+      },
+
+      toJSON: function () {
+        const obj = this.toObject();
+        delete obj.password;
+        delete obj._id;
+        return obj;
+      },
+    },
   }
 );
 

@@ -1,4 +1,4 @@
 export type NavRoute = {
-  label: 'audio' | 'form' | 'stock';
+  label: string;
   path: string;
 };

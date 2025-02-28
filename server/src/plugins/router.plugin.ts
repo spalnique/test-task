@@ -1,10 +1,8 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { authRoute, websocketRoute } from '@routes';
+import { authRoutes, websocketRoute } from '@routes';
 
-const routerPlugin: FastifyPluginAsync = async (fastify) => {
+export const routerPlugin: FastifyPluginAsync = async (fastify) => {
   await fastify.register(websocketRoute);
-  await fastify.register(authRoute, { prefix: '/api/auth' });
+  await fastify.register(authRoutes, { prefix: '/api/auth' });
 };
-
-export default routerPlugin;

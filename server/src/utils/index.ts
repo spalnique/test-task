@@ -1,1 +1,2 @@
-export { default as env } from './env';
+export { env } from './env';
+export { schemaErrorFormatter } from './schemaErrorFormatter';

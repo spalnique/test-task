@@ -1,4 +1,4 @@
-import { NavRoute } from '@/@types/route.type';
+import { NavRoute } from '@/types/route.type';
 
 export const routes: NavRoute[] = [
   { label: 'audio', path: 'audio' },

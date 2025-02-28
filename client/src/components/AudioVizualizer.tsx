@@ -5,10 +5,10 @@ type Props = ComponentPropsWithRef<'canvas'> & {
   backgroundColor?: string;
 };
 
-const AudioVisualizer = ({
+export default function AudioVisualizer({
   stream,
   backgroundColor = 'transparent',
-}: Props) => {
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioCtxRef = useRef<AudioContext>(null);
   const analyserRef = useRef<AnalyserNode>(null);
@@ -19,7 +19,6 @@ const AudioVisualizer = ({
 
     const audioCtx = new AudioContext();
     const source = audioCtx.createMediaStreamSource(stream);
-    // Update analyzer settings for better response
     const analyser = audioCtx.createAnalyser();
     analyser.fftSize = 32;
     analyser.smoothingTimeConstant = 0.4;
@@ -46,7 +45,6 @@ const AudioVisualizer = ({
           const padding = 10;
           const availableWidth = canvas.width - padding * 2;
 
-          // Adjust bar calculations with padding
           const barWidth = availableWidth / 8;
           const maxHeight = canvas.height * 0.4;
           const gap = barWidth / 2;
@@ -60,14 +58,11 @@ const AudioVisualizer = ({
               const end = Math.floor(bufferLength * 0.6);
               frequencyRange = { start, end };
             }
-            // Make bars 0,3 and 1,2 pairs handle the same frequencies
             if (i === 1 || i === 3) {
-              // Middle bars (1,2) - focused on speech frequencies
               const start = Math.floor(bufferLength * 0.3);
               const end = Math.floor(bufferLength * 0.7);
               frequencyRange = { start, end };
             } else {
-              // Outer bars (0,3) - handle lower and higher frequencies
               const start = Math.floor(bufferLength * 0.2);
               const end = Math.floor(bufferLength * 0.8);
               frequencyRange = { start, end };
@@ -79,19 +74,15 @@ const AudioVisualizer = ({
             }
             const average = sum / (frequencyRange.end - frequencyRange.start);
 
-            // Make sensitivity the same for each pair
             const sensitivityMultiplier =
               i === 2 ? 3 : i === 1 || i === 3 ? 2.25 : 1.5;
             const volume = (average / 255) * sensitivityMultiplier;
 
-            // Ensure minimum height is equal to width (making it a circle when at minimum)
             const barHeight = Math.max(barWidth, volume * maxHeight);
 
-            // Adjust x position to account for padding
             const x = padding + (i * (barWidth + gap) + gap);
             const y = (canvas.height - barHeight) / 2;
 
-            // Create gradient based on volume with adjusted intensity
             const gradient = ctx.createLinearGradient(x, y, x, y + barHeight);
             const intensity = Math.floor(volume * 255);
             gradient.addColorStop(0, `rgb(${intensity}, 34, 215)`);
@@ -124,6 +115,4 @@ const AudioVisualizer = ({
       }}
     />
   );
-};
-
-export default AudioVisualizer;
+}

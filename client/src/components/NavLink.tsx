@@ -1,6 +1,6 @@
 'use client';
 
-import { NavRoute } from '@/@types/route.type';
+import { NavRoute } from '@/types/route.type';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ComponentPropsWithoutRef } from 'react';

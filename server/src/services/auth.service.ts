@@ -1,15 +1,28 @@
+import createHttpError from 'http-errors';
+
+import { ErrorMessages } from '@constants';
 import { UserModel } from '@models';
-import { SignUpBody } from '@types';
+import { SignInBody, SignUpBody } from '@types';
 
 export class AuthService {
-  async createUser(payload: SignUpBody) {
-    const existingUser = await UserModel.findOne({ email: payload.email });
+  async createUser({ email, password }: SignUpBody) {
+    const existingUser = await UserModel.findOne({ email });
 
     if (existingUser) {
-      throw new Error('This email is already in use');
+      throw createHttpError(409, 'This email is already in use');
     }
 
-    const user = await UserModel.create(payload);
+    return await UserModel.create({ email, password });
+  }
+
+  async findUser({ email, password }: SignInBody) {
+    const user = await UserModel.findOne({ email });
+    const isValid = await user.comparePassword(password);
+
+    if (!user || !isValid) {
+      throw createHttpError(401, ErrorMessages.BAD_CREDENTIALS);
+    }
+
     return user;
   }
 }

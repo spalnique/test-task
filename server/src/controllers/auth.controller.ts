@@ -1,18 +1,14 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 
+import { SuccesMessages } from '@constants';
 import { authService } from '@services';
 import { SignUpBody } from '@types';
 
 export class AuthController {
-  async signup(
-    request: FastifyRequest<{ Body: SignUpBody }>,
-    reply: FastifyReply
-  ) {
-    const user = await authService.createUser(request.body);
-    return reply.status(201).send({
-      success: true,
-      user: { email: user.email },
-    });
+  async signup(req: FastifyRequest<{ Body: SignUpBody }>, res: FastifyReply) {
+    const user = await authService.createUser(req.body);
+
+    return res.status(201).send({ message: SuccesMessages.SIGN_UP, user });
   }
 }
 

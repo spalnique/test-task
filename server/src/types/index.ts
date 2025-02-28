@@ -6,4 +6,4 @@ export type {
 
 export type { User } from './user.type';
 
-export type { SignUpBody } from './auth.type';
+export type { SignUpBody, SignInBody } from './auth.type';
