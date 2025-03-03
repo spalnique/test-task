@@ -15,9 +15,9 @@ export class FinnhubAPIService {
   private readonly axios: AxiosInstance = axios.create(finnhubConfig);
   private readonly websocket: WebSocket;
   private readonly allCountries: CountryExchangeData[] = countryExData;
-  private prevCountry: string = '';
+  private country: CountryExchangeData | null = null;
 
-  private prevCountrySymbols: Symbol[] = [];
+  private countrySymbols: Symbol[] = [];
   private activeAbortControllers: AbortController[] = [];
 
   private result: QueryResult = {
@@ -66,19 +66,22 @@ export class FinnhubAPIService {
       );
   }
 
-  private findCountry(countryQuery: string | undefined) {
+  private filterCountryByQuery(countryQuery: string | undefined) {
     if (!countryQuery) return null;
 
-    return this.allCountries.find(
-      ({ country_name }) =>
-        country_name.toLowerCase() === countryQuery.toLowerCase()
+    const result = this.allCountries.filter(({ country_name }) =>
+      country_name.toLowerCase().includes(countryQuery.toLowerCase())
     );
+
+    if (result.length === 1) return result[0];
+
+    return null;
   }
 
   private filterSymbolList(symbolQuery: string | undefined) {
-    if (!symbolQuery) return this.prevCountrySymbols;
+    if (!symbolQuery) return this.countrySymbols;
 
-    return this.prevCountrySymbols.filter((item) =>
+    return this.countrySymbols.filter((item) =>
       item.symbol.toLowerCase().includes(symbolQuery.toLowerCase())
     );
   }
@@ -119,11 +122,9 @@ export class FinnhubAPIService {
         per_page = 5,
       } = req;
 
-      const country = this.findCountry(country_query);
-
-      if (country.country_name !== this.prevCountry) {
-        this.prevCountry = country.country_name;
-        await this.getAllSymbolsByCountry(country);
+      if (!this.country || country_query !== this.country.country_name) {
+        this.country = this.filterCountryByQuery(country_query);
+        await this.getAllSymbols();
       }
 
       const symbols = this.filterSymbolList(symbol_query);
@@ -181,18 +182,17 @@ export class FinnhubAPIService {
     }
   }
 
-  private async getAllSymbolsByCountry({
-    country_name,
-    entities,
-  }: CountryExchangeData) {
+  private async getAllSymbols() {
     try {
       const results = await Promise.allSettled(
-        entities.map(({ code, mic }) => this.getListingByExchange(code, mic))
+        this.country.entities.map(({ code, mic }) =>
+          this.getListingByExchange(code, mic)
+        )
       );
 
-      const listingsData = this.filterAllSettledResults(results);
+      const listings = this.filterAllSettledResults(results);
 
-      this.prevCountrySymbols = listingsData.toSorted((a, b) =>
+      this.countrySymbols = listings.toSorted((a, b) =>
         a.symbol.localeCompare(b.symbol)
       );
     } catch (error) {
@@ -204,7 +204,7 @@ export class FinnhubAPIService {
       } else {
         this.sendToClient({
           type: 'error',
-          message: `Failed to fetch symbols for country ${country_name}`,
+          message: `Failed to fetch symbols for country ${this.country.country_name}`,
         });
       }
     }
