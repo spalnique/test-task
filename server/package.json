@@ -19,7 +19,7 @@
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^3.0.1",
     "axios": "^1.8.1",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cors": "latest",
     "dotenv": "^16.4.5",
     "fastify": "^5.2.1",
@@ -31,7 +31,6 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/http-errors": "^2.0.4",
     "@types/ws": "^8.5.14",
