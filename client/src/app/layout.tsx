@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.className} h-dvh bg-[#121212] antialiased`}>
         <Toaster
-          position="top-center"
+          position="top-right"
           toastOptions={{
             style: { width: 200, fontSize: 12 },
             success: { duration: 3000 },

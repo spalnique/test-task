@@ -1,2 +1,3 @@
-export { default as websocketRoute } from './websocket.route';
-export { default as authRoutes } from './auth.route';
+export { realtimeAPIWebSocketRoute } from './realtimeAPIWebSocket.route';
+export { authHttpRoutes } from './authHttp.route';
+export { finnhubAPIWebSocketRoute } from './finnhubAPIWebSocket.route';

@@ -1,25 +1,13 @@
 import { DotLottie, DotLottieReact } from '@lottiefiles/dotlottie-react';
-import {
-  ComponentPropsWithRef,
-  RefCallback,
-  useCallback,
-  useMemo,
-  useRef,
-} from 'react';
+import { ComponentPropsWithRef, RefCallback, useEffect, useRef } from 'react';
 
 type Props = ComponentPropsWithRef<'div'> & {
-  isRecording: boolean;
-  isReady: boolean;
-  onStart: () => Promise<void>;
-  onStop: () => void;
+  isMuted: boolean;
+  mute: () => void;
+  unmute: () => void;
 };
 
-export default function MicrophoneButton({
-  isRecording,
-  isReady,
-  onStart,
-  onStop,
-}: Props) {
+export default function MicrophoneButton({ isMuted, mute, unmute }: Props) {
   const lottieRef = useRef<DotLottie | null>(null);
 
   const dotLottieRefCallback: RefCallback<DotLottie | null> = (lottie) => {
@@ -27,18 +15,20 @@ export default function MicrophoneButton({
     lottieRef.current = lottie;
   };
 
-  const handleMouseEnter = useCallback(() => {
-    if (isReady && lottieRef.current) lottieRef.current.play();
-  }, [isReady]);
+  const toggleMute = () => (isMuted ? unmute() : mute());
 
-  const handleMouseLeave = useCallback(() => {
-    if (isReady && lottieRef.current) lottieRef.current.stop();
-  }, [isReady]);
+  useEffect(() => {
+    if (isMuted) lottieRef.current?.play();
 
-  const lottieSrc = useMemo(
-    () => (isRecording ? 'microphone_red.lottie' : 'microphone_violet.lottie'),
-    [isRecording]
-  );
+    return () => {
+      lottieRef.current?.stop();
+      lottieRef.current = null;
+    };
+  }, [isMuted]);
+
+  const lottieSrc = isMuted
+    ? 'microphone_violet.lottie'
+    : 'microphone_red.lottie';
 
   return (
     <div className="mb-3 size-20 scale-[1.5] cursor-pointer">
@@ -48,10 +38,8 @@ export default function MicrophoneButton({
         dotLottieRefCallback={dotLottieRefCallback}
         speed={0.75}
         renderConfig={{ autoResize: true }}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onClick={isRecording ? onStop : onStart}
-        autoplay={isRecording}
+        onClick={toggleMute}
+        autoplay
         loop
       />
     </div>

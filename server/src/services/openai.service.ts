@@ -68,6 +68,7 @@ export class RealtimeAPIService {
           model: 'whisper-1',
         },
         turn_detection: {
+          type: 'server_vad',
           prefix_padding_ms: 300,
           silence_duration_ms: 500,
           threshold: 0.5,
@@ -87,18 +88,16 @@ export class RealtimeAPIService {
           break;
 
         case 'session.updated':
-          console.log('Realtime API:', parsed.type);
           this.setupPipeline();
           this.sendToClient('OK');
           break;
 
         case 'response.done':
-          console.log('Realtime API:', parsed.type);
-          this.sendToClient(parsed.response.output[0].content[0].text);
-          break;
-
-        case 'conversation.item.input_audio_transcription.completed':
-          console.log('Audio transcription:', parsed.transcription);
+          const response = JSON.stringify({
+            id: parsed.event_id,
+            text: parsed.response.output[0].content[0].text,
+          });
+          this.sendToClient(response);
           break;
 
         default:
@@ -124,17 +123,7 @@ export class RealtimeAPIService {
   }
 
   private onClientMessage(chunk: RawData) {
-    if (chunk.toString('utf-8') === 'DONE') {
-      this.sendToRealtime({ type: 'input_audio_buffer.commit' });
-      this.sendToRealtime({ type: 'response.create' });
-      return;
-    }
-
-    const isBackpressure = this.stream.write(chunk);
-    if (!isBackpressure) {
-      this.client_ws.pause();
-      this.stream.once('drain', this.client_ws.resume.bind(this));
-    }
+    this.stream.write(chunk);
   }
 
   private onClientCloseOrError() {

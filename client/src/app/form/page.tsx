@@ -1,12 +1,12 @@
 'use client';
 
-import { signUpUser } from '@/lib/api/signup';
+import { signUpUser } from '@/lib/api/auth/signup';
 import { Icon } from '@iconify/react';
 import { Button, Input, Link, Tooltip } from '@nextui-org/react';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React from 'react';
 
-export default function Component() {
+export default function FormPage() {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     React.useState(false);

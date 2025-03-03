@@ -33,6 +33,7 @@ export type ClientRealtimeEvent = {
       model: 'whisper-1';
     } | null;
     turn_detection?: {
+      type: 'server_vad';
       threshold: number;
       prefix_padding_ms: number;
       silence_duration_ms: number;

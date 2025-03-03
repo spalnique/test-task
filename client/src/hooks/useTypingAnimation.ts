@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-export function useTypingAnimation(chars: string[], delay = 25) {
+export function useTypingAnimation(string: string = '') {
   const [text, setText] = useState('');
   const intervalIdRef = useRef<NodeJS.Timeout>(undefined);
+
+  const chars = string.split('');
 
   const handleInterval = useCallback(() => {
     setText((prev) => {
@@ -16,9 +18,13 @@ export function useTypingAnimation(chars: string[], delay = 25) {
   }, [chars]);
 
   useEffect(() => {
-    intervalIdRef.current = setInterval(handleInterval, delay);
+    setText('');
+  }, [string]);
+
+  useEffect(() => {
+    intervalIdRef.current = setInterval(handleInterval, 25);
     return () => clearInterval(intervalIdRef.current);
-  }, [handleInterval, delay]);
+  }, [handleInterval]);
 
   return text;
 }
