@@ -43,13 +43,15 @@ export default function StockPage() {
   const countrySelectedKey = useMemo(
     () =>
       countryList.find(({ country }) => {
-        const queryStringValue = searchParams.get('country') || '';
+        const queryStringValue = searchParams.get('country_query') || '';
         return country.toLowerCase() === queryStringValue.toLowerCase();
       })?.country || '',
     [searchParams, countryList]
   );
 
-  const symbolDefaultValue = (searchParams.get('symbol') || '').toUpperCase();
+  const symbolDefaultValue = (
+    searchParams.get('symbol_query') || ''
+  ).toUpperCase();
 
   const updateQuery = useCallback(
     (queryObject: Record<string, string | number | null> | null) => {
@@ -70,14 +72,14 @@ export default function StockPage() {
 
   const handleCountrySelection = (key: Key | null) => {
     if (key) {
-      const query = { country: key.toString(), page: 1 };
+      const query = { country_query: key.toString(), page: 1 };
       router.push(updateQuery(query));
     }
   };
 
   const debouncedInputChange = useDebounceCall((value: string) => {
     if (value) {
-      const query = { symbol: value, page: 1 };
+      const query = { symbol_query: value, page: 1 };
       router.push(updateQuery(query));
     }
   });
@@ -87,13 +89,15 @@ export default function StockPage() {
   };
 
   const handleClearCountryInput = () => {
-    router.push(updateQuery({ country: null, page: null, symbol: null }));
+    router.push(
+      updateQuery({ country_query: null, page: null, symbol_query: null })
+    );
     setStockList([]);
     setPagination(initPagination);
   };
 
   const handleClearSymbolInput = () => {
-    router.push(updateQuery({ page: 1, symbol: null }));
+    router.push(updateQuery({ page: 1, symbol_query: null }));
   };
 
   useEffect(() => {
@@ -173,8 +177,8 @@ export default function StockPage() {
 
     const json = JSON.stringify({
       ...params,
-      country_query: params.country,
-      symbol_query: params.symbol,
+      country_query: params.country_query,
+      symbol_query: params.symbol_query,
     });
     wsRef.current?.send(json);
   }, [searchParams, isAPIReady, updateQuery]);
