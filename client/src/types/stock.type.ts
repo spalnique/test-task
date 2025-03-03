@@ -1,5 +1,5 @@
 export type CountryExchanges = {
-  country: string;
+  country_name: string;
   entities: { entity_name: string; mic: string }[];
 };
 

@@ -42,10 +42,10 @@ export default function StockPage() {
 
   const countrySelectedKey = useMemo(
     () =>
-      countryList.find(({ country }) => {
+      countryList.find(({ country_name }) => {
         const queryStringValue = searchParams.get('country_query') || '';
-        return country.toLowerCase() === queryStringValue.toLowerCase();
-      })?.country || '',
+        return country_name.toLowerCase() === queryStringValue.toLowerCase();
+      })?.country_name || '',
     [searchParams, countryList]
   );
 
@@ -202,9 +202,9 @@ export default function StockPage() {
             }}
             isDisabled={!isAPIReady}
           >
-            {({ country }) => (
-              <AutocompleteItem key={country} className="dark">
-                {country}
+            {({ country_name }) => (
+              <AutocompleteItem key={country_name} className="dark">
+                {country_name}
               </AutocompleteItem>
             )}
           </Autocomplete>
@@ -218,7 +218,7 @@ export default function StockPage() {
             description={`${pagination.total_items || 0} symbols found`}
             classNames={{ description: 'mx-auto', input: 'uppercase' }}
             onValueChange={debouncedInputChange}
-            isDisabled={isLoading || !isAPIReady || !stockList.length}
+            isDisabled={isLoading || !isAPIReady}
             isClearable
             onClear={handleClearSymbolInput}
           />

@@ -2,19 +2,19 @@ import { CountryExchangeData } from '@types';
 
 export const countryExData: CountryExchangeData[] = [
   {
-    country: 'Argentina',
+    country_name: 'Argentina',
     entities: [
       { entity_name: 'Buenos Aires Stock Exchange', mic: 'XBUE', code: 'BA' },
     ],
   },
   {
-    country: 'Austria',
+    country_name: 'Austria',
     entities: [
       { entity_name: 'Vienna Stock Exchange', mic: 'XWBO', code: 'VI' },
     ],
   },
   {
-    country: 'Australia',
+    country_name: 'Australia',
     entities: [
       {
         entity_name: 'Australian Securities Exchange',
@@ -25,21 +25,21 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Bangladesh',
+    country_name: 'Bangladesh',
     entities: [
       { entity_name: 'Dhaka Stock Exchange', mic: 'XDHA', code: 'DS' },
     ],
   },
   {
-    country: 'Belgium',
+    country_name: 'Belgium',
     entities: [{ entity_name: 'Euronext Brussels', mic: 'XBRU', code: 'BR' }],
   },
   {
-    country: 'Bahrain',
+    country_name: 'Bahrain',
     entities: [{ entity_name: 'Bahrain Bourse', mic: 'XBAH', code: 'BH' }],
   },
   {
-    country: 'Brazil',
+    country_name: 'Brazil',
     entities: [
       {
         entity_name: 'B3 S.A. - Brasil, Bolsa, Balcão',
@@ -49,7 +49,7 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Canada',
+    country_name: 'Canada',
     entities: [
       { entity_name: 'Canadian Securities Exchange', mic: 'XCNQ', code: 'CN' },
       { entity_name: 'Aequitas NEO Exchange', mic: 'NEOE', code: 'NE' },
@@ -58,36 +58,36 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Switzerland',
+    country_name: 'Switzerland',
     entities: [{ entity_name: 'SIX Swiss Exchange', mic: 'XSWX', code: 'SW' }],
   },
   {
-    country: 'Chile',
+    country_name: 'Chile',
     entities: [
       { entity_name: 'Santiago Stock Exchange', mic: 'XSGO', code: 'SN' },
     ],
   },
   {
-    country: 'China',
+    country_name: 'China',
     entities: [
       { entity_name: 'Shanghai Stock Exchange', mic: 'XSHG', code: 'SS' },
       { entity_name: 'Shenzhen Stock Exchange', mic: 'XSHE', code: 'SZ' },
     ],
   },
   {
-    country: 'Colombia',
+    country_name: 'Colombia',
     entities: [
       { entity_name: 'Colombia Stock Exchange', mic: 'XBOG', code: 'BC' },
     ],
   },
   {
-    country: 'Czech',
+    country_name: 'Czech',
     entities: [
       { entity_name: 'Prague Stock Exchange', mic: 'XPRA', code: 'PR' },
     ],
   },
   {
-    country: 'Germany',
+    country_name: 'Germany',
     entities: [
       { entity_name: 'Berlin Stock Exchange', mic: 'XBER', code: 'BE' },
       {
@@ -105,31 +105,31 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Denmark',
+    country_name: 'Denmark',
     entities: [{ entity_name: 'Nasdaq Copenhagen', mic: 'XCSE', code: 'CO' }],
   },
   {
-    country: 'Estonia',
+    country_name: 'Estonia',
     entities: [{ entity_name: 'Nasdaq Tallinn', mic: 'XTAL', code: 'TL' }],
   },
   {
-    country: 'Egypt',
+    country_name: 'Egypt',
     entities: [{ entity_name: 'Egyptian Exchange', mic: 'XCAI', code: 'CA' }],
   },
   {
-    country: 'Spain',
+    country_name: 'Spain',
     entities: [{ entity_name: 'Bolsa de Madrid', mic: 'XMAD', code: 'MC' }],
   },
   {
-    country: 'Finland',
+    country_name: 'Finland',
     entities: [{ entity_name: 'Nasdaq Helsinki', mic: 'XHEL', code: 'HE' }],
   },
   {
-    country: 'France',
+    country_name: 'France',
     entities: [{ entity_name: 'Euronext Paris', mic: 'XPAR', code: 'PA' }],
   },
   {
-    country: 'UK',
+    country_name: 'UK',
     entities: [
       { entity_name: 'Aquis Exchange', mic: 'AQSE', code: 'AQ' },
       { entity_name: 'London Stock Exchange', mic: 'XLON', code: 'L' },
@@ -142,41 +142,41 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Greece',
+    country_name: 'Greece',
     entities: [
       { entity_name: 'Athens Stock Exchange', mic: 'ASEX', code: 'AT' },
     ],
   },
   {
-    country: 'Hong Kong',
+    country_name: 'Hong Kong',
     entities: [
       { entity_name: 'Hong Kong Stock Exchange', mic: 'XHKG', code: 'HK' },
     ],
   },
   {
-    country: 'Hungary',
+    country_name: 'Hungary',
     entities: [
       { entity_name: 'Budapest Stock Exchange', mic: 'XBUD', code: 'BD' },
     ],
   },
   {
-    country: 'Indonesia',
+    country_name: 'Indonesia',
     entities: [
       { entity_name: 'Indonesia Stock Exchange', mic: 'XIDX', code: 'JK' },
     ],
   },
   {
-    country: 'Ireland',
+    country_name: 'Ireland',
     entities: [{ entity_name: 'Euronext Dublin', mic: 'XDUB', code: 'IR' }],
   },
   {
-    country: 'Israel',
+    country_name: 'Israel',
     entities: [
       { entity_name: 'Tel Aviv Stock Exchange', mic: 'XTAE', code: 'TA' },
     ],
   },
   {
-    country: 'India',
+    country_name: 'India',
     entities: [
       { entity_name: 'Bombay Stock Exchange', mic: 'XBOM', code: 'BO' },
       {
@@ -187,112 +187,112 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Iceland',
+    country_name: 'Iceland',
     entities: [{ entity_name: 'Nasdaq Iceland', mic: 'XICE', code: 'IC' }],
   },
   {
-    country: 'Italy',
+    country_name: 'Italy',
     entities: [{ entity_name: 'Borsa Italiana', mic: 'XMIL', code: 'MI' }],
   },
   {
-    country: 'Japan',
+    country_name: 'Japan',
     entities: [{ entity_name: 'Japan Exchange Group', mic: 'XJPX', code: 'T' }],
   },
   {
-    country: 'Korea',
+    country_name: 'Korea',
     entities: [
       { entity_name: 'Korea Exchange (Kosdaq)', mic: 'XKOS', code: 'KQ' },
       { entity_name: 'Korea Exchange', mic: 'XKRX', code: 'KS' },
     ],
   },
   {
-    country: 'Kuwait',
+    country_name: 'Kuwait',
     entities: [{ entity_name: 'Boursa Kuwait', mic: 'XKUW', code: 'KW' }],
   },
   {
-    country: 'Lithuania',
+    country_name: 'Lithuania',
     entities: [{ entity_name: 'Nasdaq Vilnius', mic: 'XLIT', code: 'VS' }],
   },
   {
-    country: 'Latvia',
+    country_name: 'Latvia',
     entities: [{ entity_name: 'Nasdaq Riga', mic: 'XRIS', code: 'RG' }],
   },
   {
-    country: 'Morroco',
+    country_name: 'Morroco',
     entities: [
       { entity_name: 'Casablanca Stock Exchange', mic: 'XCAS', code: 'CS' },
     ],
   },
   {
-    country: 'Malta',
+    country_name: 'Malta',
     entities: [
       { entity_name: 'Malta Stock Exchange', mic: 'XMAL', code: 'MT' },
     ],
   },
   {
-    country: 'Mexico',
+    country_name: 'Mexico',
     entities: [
       { entity_name: 'Mexican Stock Exchange', mic: 'XMEX', code: 'MX' },
     ],
   },
   {
-    country: 'Malaysia',
+    country_name: 'Malaysia',
     entities: [{ entity_name: 'Bursa Malaysia', mic: 'XKLS', code: 'KL' }],
   },
   {
-    country: 'Nigeria',
+    country_name: 'Nigeria',
     entities: [
       { entity_name: 'Nigerian Exchange Group', mic: 'XNSA', code: 'NL' },
     ],
   },
   {
-    country: 'Netherlands',
+    country_name: 'Netherlands',
     entities: [{ entity_name: 'Euronext Amsterdam', mic: 'XAMS', code: 'AS' }],
   },
   {
-    country: 'Norway',
+    country_name: 'Norway',
     entities: [{ entity_name: 'Oslo Børs', mic: 'XOSL', code: 'OL' }],
   },
   {
-    country: 'New Zealand',
+    country_name: 'New Zealand',
     entities: [
       { entity_name: 'New Zealand Exchange', mic: 'XNZE', code: 'NZ' },
     ],
   },
   {
-    country: 'Philipppine',
+    country_name: 'Philipppine',
     entities: [
       { entity_name: 'Philippine Stock Exchange', mic: 'XPHS', code: 'PM' },
     ],
   },
   {
-    country: 'Poland',
+    country_name: 'Poland',
     entities: [
       { entity_name: 'Warsaw Stock Exchange', mic: 'XWAR', code: 'WA' },
     ],
   },
   {
-    country: 'Portugal',
+    country_name: 'Portugal',
     entities: [{ entity_name: 'Euronext Lisbon', mic: 'XLIS', code: 'LS' }],
   },
   {
-    country: 'Qatar',
+    country_name: 'Qatar',
     entities: [
       { entity_name: 'Qatar Stock Exchange', mic: 'DSMD', code: 'QA' },
     ],
   },
   {
-    country: 'Romania',
+    country_name: 'Romania',
     entities: [
       { entity_name: 'Bucharest Stock Exchange', mic: 'XBSE', code: 'RO' },
     ],
   },
   {
-    country: 'Russia',
+    country_name: 'Russia',
     entities: [{ entity_name: 'Moscow Exchange', mic: 'MISX', code: 'ME' }],
   },
   {
-    country: 'Saudi',
+    country_name: 'Saudi',
     entities: [
       {
         entity_name: 'Saudi Stock Exchange (Tadawul)',
@@ -302,42 +302,42 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Sweden',
+    country_name: 'Sweden',
     entities: [
       { entity_name: 'Nasdaq Stockholm', mic: 'XSTO', code: 'ST' },
       { entity_name: 'Spotlight Stock Market', mic: 'XSAT', code: 'SL' },
     ],
   },
   {
-    country: 'Singapore',
+    country_name: 'Singapore',
     entities: [{ entity_name: 'Singapore Exchange', mic: 'XSES', code: 'SI' }],
   },
   {
-    country: 'Thailand',
+    country_name: 'Thailand',
     entities: [
       { entity_name: 'Stock Exchange of Thailand', mic: 'XBKK', code: 'BK' },
     ],
   },
   {
-    country: 'Turkey',
+    country_name: 'Turkey',
     entities: [{ entity_name: 'Borsa Istanbul', mic: 'XIST', code: 'IS' }],
   },
   {
-    country: 'Taiwan',
+    country_name: 'Taiwan',
     entities: [
       { entity_name: 'Taiwan Stock Exchange', mic: 'XTAI', code: 'TW' },
       { entity_name: 'Taipei Exchange', mic: 'ROCO', code: 'TWO' },
     ],
   },
   {
-    country: 'UAE',
+    country_name: 'UAE',
     entities: [
       { entity_name: 'Abu Dhabi Securities Exchange', mic: 'XADS', code: 'AD' },
       { entity_name: 'Dubai Financial Market', mic: 'XDFM', code: 'DB' },
     ],
   },
   {
-    country: 'USA',
+    country_name: 'USA',
     entities: [
       { entity_name: 'New York Stock Exchange', mic: 'XNYS', code: 'US' },
       { entity_name: 'NYSE American', mic: 'XASE', code: 'US' },
@@ -353,20 +353,20 @@ export const countryExData: CountryExchangeData[] = [
     ],
   },
   {
-    country: 'Venezuela',
+    country_name: 'Venezuela',
     entities: [
       { entity_name: 'Caracas Stock Exchange', mic: 'BVCA', code: 'CR' },
     ],
   },
   {
-    country: 'Vietnam',
+    country_name: 'Vietnam',
     entities: [
       { entity_name: 'Hanoi Stock Exchange', mic: 'HSTC', code: 'VN' },
       { entity_name: 'Ho Chi Minh Stock Exchange', mic: 'XSTC', code: 'VN' },
     ],
   },
   {
-    country: 'South Africa',
+    country_name: 'South Africa',
     entities: [
       { entity_name: 'Johannesburg Stock Exchange', mic: 'XJSE', code: 'JO' },
     ],

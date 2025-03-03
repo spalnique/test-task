@@ -16,8 +16,8 @@ export class FinnhubAPIService {
   private readonly websocket: WebSocket;
   private readonly allCountries: CountryExchangeData[] = countryExData;
   private prevCountry: string = '';
-  private prevSymbol: string = '';
-  private requestedCountrySymbols: Symbol[] = [];
+
+  private prevCountrySymbols: Symbol[] = [];
   private activeAbortControllers: AbortController[] = [];
 
   private result: QueryResult = {
@@ -66,33 +66,35 @@ export class FinnhubAPIService {
       );
   }
 
-  private filterCountryList(countryQuery: string) {
-    if (!countryQuery) return;
+  private findCountry(countryQuery: string | undefined) {
+    if (!countryQuery) return null;
 
-    return this.allCountries.filter(({ country }) =>
-      country.toLowerCase().includes(countryQuery.toLowerCase())
+    return this.allCountries.find(
+      ({ country_name }) =>
+        country_name.toLowerCase() === countryQuery.toLowerCase()
     );
   }
 
-  private filterSymbolList(symbolQuery: string) {
-    if (!symbolQuery) return this.requestedCountrySymbols;
+  private filterSymbolList(symbolQuery: string | undefined) {
+    if (!symbolQuery) return this.prevCountrySymbols;
 
-    return this.requestedCountrySymbols.filter((item) =>
+    return this.prevCountrySymbols.filter((item) =>
       item.symbol.toLowerCase().includes(symbolQuery.toLowerCase())
     );
   }
 
-  private calcStocksPagination<T>(stocksArray: T[]) {
-    const totalItems = stocksArray.length;
-    const totalPages = Math.ceil(totalItems / this.result.pagination.per_page);
+  private calculatePagination<T>(
+    dataArray: T[],
+    page: number,
+    perPage: number
+  ) {
+    const totalItems = dataArray.length;
+    const totalPages = Math.ceil(totalItems / perPage);
 
+    this.result.pagination.page = page;
+    this.result.pagination.per_page = perPage;
     this.result.pagination.total_items = totalItems;
     this.result.pagination.total_pages = totalPages;
-  }
-
-  private updStocksPagination(page: number, perPage: number) {
-    if (page) this.result.pagination.page = page;
-    if (perPage) this.result.pagination.per_page = perPage;
   }
 
   private sendToClient<T>(data: T) {
@@ -108,44 +110,32 @@ export class FinnhubAPIService {
   private async onClientMessage(chunk: RawData) {
     try {
       this.abortAllRequests();
-
       const req = JSON.parse(chunk.toString('utf-8')) as ClientFinnhubEvent;
-      const { country_query = '', symbol_query = '', page, per_page } = req;
 
-      this.updStocksPagination(page, per_page);
+      const {
+        country_query = '',
+        symbol_query = '',
+        page = 1,
+        per_page = 5,
+      } = req;
 
-      const filteredCountries = this.filterCountryList(country_query);
+      const country = this.findCountry(country_query);
 
-      if (filteredCountries?.length === 1) {
-        const [country] = filteredCountries;
-        const isNewCountry = country.country !== this.prevCountry;
-
-        if (isNewCountry) {
-          this.prevCountry = country.country;
-          this.prevSymbol = '';
-          this.requestedCountrySymbols = [];
-          await this.getAllSymbolsByCountry(country);
-        }
+      if (country.country_name !== this.prevCountry) {
+        this.prevCountry = country.country_name;
+        await this.getAllSymbolsByCountry(country);
       }
 
-      if (this.requestedCountrySymbols.length > 0) {
-        let symbolsToProcess = this.requestedCountrySymbols;
-        if (symbol_query && this.prevSymbol !== symbol_query) {
-          symbolsToProcess = this.filterSymbolList(symbol_query) || [];
-          this.prevSymbol = symbol_query;
-        }
+      const symbols = this.filterSymbolList(symbol_query);
 
-        this.calcStocksPagination(symbolsToProcess);
-
-        await this.getStocks(symbolsToProcess);
-      }
+      this.calculatePagination(symbols, page, per_page);
+      await this.getStocks(symbols);
 
       this.sendToClient({
         type: 'done',
         data: {
           stock_data: this.result.stock_data,
           pagination: this.result.pagination,
-          symbol_count: this.requestedCountrySymbols.length,
         },
       });
     } catch (error) {
@@ -192,7 +182,7 @@ export class FinnhubAPIService {
   }
 
   private async getAllSymbolsByCountry({
-    country,
+    country_name,
     entities,
   }: CountryExchangeData) {
     try {
@@ -202,7 +192,7 @@ export class FinnhubAPIService {
 
       const listingsData = this.filterAllSettledResults(results);
 
-      this.requestedCountrySymbols = listingsData.toSorted((a, b) =>
+      this.prevCountrySymbols = listingsData.toSorted((a, b) =>
         a.symbol.localeCompare(b.symbol)
       );
     } catch (error) {
@@ -214,7 +204,7 @@ export class FinnhubAPIService {
       } else {
         this.sendToClient({
           type: 'error',
-          message: `Failed to fetch symbols for country ${country}`,
+          message: `Failed to fetch symbols for country ${country_name}`,
         });
       }
     }

@@ -1,7 +1,7 @@
 export type ExchangeEntity = { entity_name: string; code: string; mic: string };
 
 export type CountryExchangeData = {
-  country: string;
+  country_name: string;
   entities: ExchangeEntity[];
 };
 
