@@ -1,8 +1,13 @@
 import { FastifyPluginAsync } from 'fastify';
 
-import { authRoutes, websocketRoute } from '@routes';
+import {
+  authHttpRoutes,
+  finnhubAPIWebSocketRoute,
+  realtimeAPIWebSocketRoute,
+} from '@routes';
 
 export const routerPlugin: FastifyPluginAsync = async (fastify) => {
-  await fastify.register(websocketRoute);
-  await fastify.register(authRoutes, { prefix: '/api/auth' });
+  await fastify.register(realtimeAPIWebSocketRoute);
+  await fastify.register(finnhubAPIWebSocketRoute);
+  await fastify.register(authHttpRoutes, { prefix: '/api/auth' });
 };
