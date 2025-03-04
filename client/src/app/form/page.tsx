@@ -3,8 +3,10 @@
 import { signUpUser } from '@/lib/api/auth/signup';
 import { Icon } from '@iconify/react';
 import { Button, Input, Link, Tooltip } from '@nextui-org/react';
+import { AxiosError } from 'axios';
 import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
 import React from 'react';
+import toast from 'react-hot-toast';
 
 export default function FormPage() {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
@@ -95,7 +97,44 @@ export default function FormPage() {
     }
     setIsConfirmPasswordValid(true);
 
-    signUpUser({ email, password });
+    (async () => {
+      try {
+        toast.dismiss();
+        toast.loading('Creating your account...', { id: 'signup' });
+
+        await signUpUser({ email, password });
+
+        toast.success(`Account created for ${email}`, {
+          id: 'signup',
+        });
+
+        setEmail('');
+        setPassword('');
+        setPage([0, 0]);
+      } catch (error) {
+        toast.dismiss();
+
+        if (error instanceof AxiosError) {
+          const messages = error.response?.data.message.split('\n') as string[];
+
+          messages.forEach((message) => {
+            toast.error(message);
+            if (message.toLowerCase().includes('password')) setPage([1, 1]);
+            if (message.toLowerCase().includes('email')) {
+              setPage([0, 0]);
+              setEmail('');
+            }
+          });
+        } else if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(error as string);
+        }
+      } finally {
+        setPassword('');
+        setConfirmPassword('');
+      }
+    })();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

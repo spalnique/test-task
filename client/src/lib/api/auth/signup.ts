@@ -1,6 +1,5 @@
 import { UserAuthBody } from '@/types/auth.type';
-import axios, { AxiosError } from 'axios';
-import toast from 'react-hot-toast';
+import axios from 'axios';
 
 type SignUpResponse = {
   message: string;
@@ -13,23 +12,6 @@ const authAPI = axios.create({
 });
 
 export const signUpUser = async (payload: UserAuthBody) => {
-  toast.dismiss();
-  toast.loading('Creating your account...', { id: 'signup' });
-
-  try {
-    const { data } = await authAPI.post<SignUpResponse>('/signup', payload);
-
-    toast.success(`Account created for ${data.user.email}`, { id: 'signup' });
-  } catch (error) {
-    toast.dismiss();
-
-    if (error instanceof AxiosError) {
-      const messages = error.response?.data.message.split('\n') as string[];
-      messages.forEach((message) => toast.error(message));
-    } else if (error instanceof Error) {
-      toast.error(error.message);
-    } else {
-      toast.error(error as string);
-    }
-  }
+  const { data } = await authAPI.post<SignUpResponse>('/signup', payload);
+  return data;
 };
