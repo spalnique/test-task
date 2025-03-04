@@ -1,0 +1,23 @@
+{
+  "name": "test-task-vorcl",
+  "version": "1.0.0",
+  "description": "next.js + node.js monorepo",
+  "main": "index.js",
+  "scripts": {
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run dev",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.4.1",
+    "@types/node": "^22.13.4",
+    "concurrently": "^9.1.2",
+    "prettier": "^3.5.1",
+    "prettier-plugin-css-order": "^2.1.2",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  }
+}

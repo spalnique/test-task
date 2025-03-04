@@ -1,41 +1,52 @@
-"use client";
+'use client';
 
-import React from "react";
-import {Button, Input, Link, Tooltip} from "@nextui-org/react";
-import {AnimatePresence, domAnimation, LazyMotion, m} from "framer-motion";
-import {Icon} from "@iconify/react";
+import { signUpUser } from '@/lib/api/auth/signup';
+import { Icon } from '@iconify/react';
+import { Button, Input, Link, Tooltip } from '@nextui-org/react';
+import { AxiosError } from 'axios';
+import { AnimatePresence, domAnimation, LazyMotion, m } from 'framer-motion';
+import React from 'react';
+import toast from 'react-hot-toast';
 
-export default function Component() {
+export default function FormPage() {
   const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = React.useState(false);
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
+    React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
   const [[page, direction], setPage] = React.useState([0, 0]);
   const [isEmailValid, setIsEmailValid] = React.useState(true);
   const [isPasswordValid, setIsPasswordValid] = React.useState(true);
-  const [isConfirmPasswordValid, setIsConfirmPasswordValid] = React.useState(true);
+  const [isConfirmPasswordValid, setIsConfirmPasswordValid] =
+    React.useState(true);
 
-  const togglePasswordVisibility = () => setIsPasswordVisible(!isPasswordVisible);
+  const togglePasswordVisibility = () =>
+    setIsPasswordVisible(!isPasswordVisible);
+
   const toggleConfirmPasswordVisibility = () =>
     setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
 
   const Title = React.useCallback(
-    (props: React.PropsWithChildren<{}>) => (
+    (props: React.PropsWithChildren) => (
       <m.h1
-        animate={{opacity: 1, x: 0}}
+        animate={{ opacity: 1, x: 0 }}
         className="text-xl font-medium"
-        exit={{opacity: 0, x: -10}}
-        initial={{opacity: 0, x: -10}}
+        exit={{ opacity: 0, x: -10 }}
+        initial={{ opacity: 0, x: -10 }}
       >
         {props.children}
       </m.h1>
     ),
-    [page],
+    [page]
   );
 
   const titleContent = React.useMemo(() => {
-    return page === 0 ? "Sign Up" : page === 1 ? "Enter Password" : "Confirm Password";
+    return page === 0
+      ? 'Sign Up'
+      : page === 1
+        ? 'Enter Password'
+        : 'Confirm Password';
   }, [page]);
 
   const variants = {
@@ -82,12 +93,48 @@ export default function Component() {
   const handleConfirmPasswordSubmit = () => {
     if (!confirmPassword.length || confirmPassword !== password) {
       setIsConfirmPasswordValid(false);
-
       return;
     }
     setIsConfirmPasswordValid(true);
-    // Submit logic or API call here
-    console.log(`Email: ${email}, Password: ${password}`);
+
+    (async () => {
+      try {
+        toast.dismiss();
+        toast.loading('Creating your account...', { id: 'signup' });
+
+        await signUpUser({ email, password });
+
+        toast.success(`Account created for ${email}`, {
+          id: 'signup',
+        });
+
+        setEmail('');
+        setPassword('');
+        setPage([0, 0]);
+      } catch (error) {
+        toast.dismiss();
+
+        if (error instanceof AxiosError) {
+          const messages = error.response?.data.message.split('\n') as string[];
+
+          messages.forEach((message) => {
+            toast.error(message);
+            if (message.toLowerCase().includes('password')) setPage([1, 1]);
+            if (message.toLowerCase().includes('email')) {
+              setPage([0, 0]);
+              setEmail('');
+            }
+          });
+        } else if (error instanceof Error) {
+          toast.error(error.message);
+        } else {
+          toast.error(error as string);
+        }
+      } finally {
+        setPassword('');
+        setConfirmPassword('');
+      }
+    })();
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -109,18 +156,23 @@ export default function Component() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="flex w-full max-w-sm flex-col gap-4 overflow-hidden rounded-large bg-content1 px-8 pb-10 pt-6 shadow-small">
+      <div className="rounded-large shadow-small dark flex w-full max-w-sm flex-col gap-4 overflow-hidden px-8 pb-10 pt-6">
         <LazyMotion features={domAnimation}>
           <m.div className="flex min-h-[40px] items-center gap-2 pb-2">
             <AnimatePresence initial={false} mode="popLayout">
               {page >= 1 && (
                 <m.div
-                  animate={{opacity: 1, x: 0}}
-                  exit={{opacity: 0, x: -10}}
-                  initial={{opacity: 0, x: -10}}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                  initial={{ opacity: 0, x: -10 }}
                 >
                   <Tooltip content="Go back" delay={3000}>
-                    <Button isIconOnly size="sm" variant="flat" onPress={() => paginate(-1)}>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="flat"
+                      onPress={() => paginate(-1)}
+                    >
                       <Icon
                         className="text-default-500"
                         icon="solar:alt-arrow-left-linear"
@@ -143,7 +195,7 @@ export default function Component() {
               custom={direction}
               exit="exit"
               initial="enter"
-              transition={{duration: 0.2}}
+              transition={{ duration: 0.2 }}
               variants={variants}
               onSubmit={handleSubmit}
             >
@@ -154,7 +206,7 @@ export default function Component() {
                   label="Email Address"
                   name="email"
                   type="email"
-                  validationState={isEmailValid ? "valid" : "invalid"}
+                  validationState={isEmailValid ? 'valid' : 'invalid'}
                   value={email}
                   onValueChange={(value) => {
                     setIsEmailValid(true);
@@ -170,12 +222,12 @@ export default function Component() {
                     <button type="button" onClick={togglePasswordVisibility}>
                       {isPasswordVisible ? (
                         <Icon
-                          className="pointer-events-none text-2xl text-default-400"
+                          className="text-default-400 pointer-events-none text-2xl"
                           icon="solar:eye-closed-linear"
                         />
                       ) : (
                         <Icon
-                          className="pointer-events-none text-2xl text-default-400"
+                          className="text-default-400 pointer-events-none text-2xl"
                           icon="solar:eye-bold"
                         />
                       )}
@@ -183,8 +235,8 @@ export default function Component() {
                   }
                   label="Password"
                   name="password"
-                  type={isPasswordVisible ? "text" : "password"}
-                  validationState={isPasswordValid ? "valid" : "invalid"}
+                  type={isPasswordVisible ? 'text' : 'password'}
+                  validationState={isPasswordValid ? 'valid' : 'invalid'}
                   value={password}
                   onValueChange={(value) => {
                     setIsPasswordValid(true);
@@ -197,25 +249,29 @@ export default function Component() {
                   autoFocus
                   isRequired
                   endContent={
-                    <button type="button" onClick={toggleConfirmPasswordVisibility}>
-                      {isConfirmPasswordVisible ? (
-                        <Icon
-                          className="pointer-events-none text-2xl text-default-400"
-                          icon="solar:eye-closed-linear"
-                        />
-                      ) : (
-                        <Icon
-                          className="pointer-events-none text-2xl text-default-400"
-                          icon="solar:eye-bold"
-                        />
-                      )}
+                    <button
+                      type="button"
+                      onClick={toggleConfirmPasswordVisibility}
+                    >
+                      <Icon
+                        className="text-default-400 pointer-events-none text-2xl"
+                        icon={
+                          isConfirmPasswordVisible
+                            ? 'solar:eye-closed-linear'
+                            : 'solar:eye-bold'
+                        }
+                      />
                     </button>
                   }
-                  errorMessage={!isConfirmPasswordValid ? "Passwords do not match" : undefined}
+                  errorMessage={
+                    !isConfirmPasswordValid
+                      ? 'Passwords do not match'
+                      : undefined
+                  }
                   label="Confirm Password"
                   name="confirmPassword"
-                  type={isConfirmPasswordVisible ? "text" : "password"}
-                  validationState={isConfirmPasswordValid ? "valid" : "invalid"}
+                  type={isConfirmPasswordVisible ? 'text' : 'password'}
+                  validationState={isConfirmPasswordValid ? 'valid' : 'invalid'}
                   value={confirmPassword}
                   onValueChange={(value) => {
                     setIsConfirmPasswordValid(true);
@@ -225,15 +281,15 @@ export default function Component() {
               )}
               <Button fullWidth color="primary" type="submit">
                 {page === 0
-                  ? "Continue with Email"
+                  ? 'Continue with Email'
                   : page === 1
-                    ? "Enter Password"
-                    : "Confirm Password"}
+                    ? 'Enter Password'
+                    : 'Confirm Password'}
               </Button>
             </m.form>
           </AnimatePresence>
         </LazyMotion>
-        <p className="text-center text-small">
+        <p className="text-small text-center">
           Already have an account?&nbsp;
           <Link href="#" size="sm">
             Log In
