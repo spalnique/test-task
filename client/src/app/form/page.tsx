@@ -1,6 +1,6 @@
 'use client';
 
-import { signUpUser } from '@/lib/api/auth/signup';
+import { signUpUser } from '@/lib/api/auth/auth.api';
 import { Icon } from '@iconify/react';
 import { Button, Input, Link, Tooltip } from '@nextui-org/react';
 import { AxiosError } from 'axios';

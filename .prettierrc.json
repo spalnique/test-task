@@ -1,0 +1,29 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "jsxBracketSameLine": false,
+  "arrowParens": "always",
+  "proseWrap": "always",
+  "plugins": [
+    "@ianvs/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "importOrder": [
+    "<BUILTIN_MODULES>",
+    "<THIRD_PARTY_MODULES>",
+    "<TYPES>^(node:)",
+    "<TYPES>",
+    "",
+    "<TYPES>^@types",
+    "",
+    "^@[a-zA-Z0-9]+$",
+    "",
+    "^[.]"
+  ],
+  "cssDeclarationSorterOrder": "smacss"
+}
