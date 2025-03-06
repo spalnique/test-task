@@ -1,5 +1,6 @@
-import { signinAction } from '@/app/actions/auth';
+import { signInAction } from '@/app/actions/auth';
 import { initSignIn } from '@/constants/auth';
+import { signOutUser } from '@/lib/api/auth/auth.api';
 import { Form } from '@heroui/react';
 import { useActionState, useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -11,50 +12,74 @@ import HaveAnAccount from './HaveAnAccount';
 import SubmitButton from './SubmitButton';
 
 export default function LoginForm() {
-  const defaultValuesRef = useRef(initSignIn);
+  const user = localStorage.getItem('user');
+  const persistedValuesRef = useRef(initSignIn);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [state, action, pending] = useActionState(signinAction, initSignIn);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    defaultValuesRef.current = { ...state };
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const [isAuth, setIsAuth] = useState(!!user);
 
-    if (state.error) setErrorMessage(state.error);
-
-    inputRef.current?.focus();
-  }, [state]);
-
-  useEffect(() => {
-    const { user, errors } = state.response;
-    if (user) toast.success(`Welcome back, ${user.email}!`);
-    if (errors) errors.forEach((message) => toast.error(message));
-  }, [state]);
-
-  const handleValueChange = () => {
-    if (errorMessage) setErrorMessage(null);
-  };
-
-  const backAction = (formData: FormData) => {
-    setErrorMessage(null);
-    formData.set('back', 'email');
-    action(formData);
-  };
+  const [state, action, pending] = useActionState(signInAction, initSignIn);
 
   const isEmail = !state.email;
-
-  const buttonLabel = pending ? 'Submitting...' : isEmail ? 'Next' : 'Sign in';
 
   const name = isEmail ? 'email' : 'password';
   const type = isEmail ? 'email' : 'password';
   const label = isEmail ? 'Email' : 'Password';
 
+  const buttonLabel = pending ? 'Submitting...' : isEmail ? 'Next' : 'Sign in';
+
   const defaultValue = isEmail
-    ? defaultValuesRef.current.email
-    : defaultValuesRef.current.password;
+    ? persistedValuesRef.current.email
+    : persistedValuesRef.current.password;
+
+  const onUnmountEffects = () => () => {
+    toast.dismiss();
+    inputRef.current = null;
+  };
+
+  const onErrorEffects = () => {
+    persistedValuesRef.current = { ...state };
+
+    const { validationError, apiErrors } = state;
+
+    if (validationError) setValidationError(validationError);
+    if (apiErrors) apiErrors.forEach((message) => toast.error(message));
+
+    inputRef.current?.focus();
+  };
+
+  const onSuccessEffects = () => {
+    if (state.user) {
+      localStorage.setItem('user', state.user.email);
+      toast.success(`Welcome back, ${state.user.email}!`);
+    }
+  };
+
+  const handleResetErrorOnInput = () => {
+    toast.dismiss();
+    if (validationError) setValidationError(null);
+  };
+
+  const handleBackButtonAction = (formData: FormData) => {
+    setValidationError(null);
+    formData.set('back', 'email');
+    action(formData);
+  };
+
+  const handleLogoutButton = () => {
+    signOutUser();
+    localStorage.removeItem('user');
+    setIsAuth(false);
+  };
+
+  useEffect(onErrorEffects, [state]);
+  useEffect(onSuccessEffects, [state]);
+  useEffect(onUnmountEffects, []);
 
   return (
     <>
-      {!state.response.user ? (
+      {!isAuth ? (
         <Form
           className="flex h-full flex-col items-center gap-8"
           action={action}
@@ -67,19 +92,21 @@ export default function LoginForm() {
             type={type}
             label={label}
             defaultValue={defaultValue}
-            onValueChange={handleValueChange}
-            isInvalid={!!errorMessage}
-            errorMessage={errorMessage}
+            onValueChange={handleResetErrorOnInput}
+            isInvalid={!!validationError}
+            errorMessage={validationError}
           />
 
           <div className="flex w-full flex-row-reverse gap-5">
-            <SubmitButton label={buttonLabel} isDisabled={!!errorMessage} />
-            {!isEmail && <BackButton label="<" formAction={backAction} />}
+            <SubmitButton label={buttonLabel} isDisabled={!!validationError} />
+            {!isEmail && (
+              <BackButton label="<" formAction={handleBackButtonAction} />
+            )}
           </div>
           <HaveAnAccount />
         </Form>
       ) : (
-        <button>Logout</button>
+        <SubmitButton label="Sign out" onPress={handleLogoutButton} />
       )}
     </>
   );

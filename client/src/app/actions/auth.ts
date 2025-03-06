@@ -1,6 +1,6 @@
 'use server';
 
-import { emailPattern, initSignUp } from '@/constants/auth';
+import { emailPattern, initSignIn, initSignUp } from '@/constants/auth';
 import { signInUser, signUpUser } from '@/lib/api/auth/auth.api';
 import { SignInFormState, SignUpFormState } from '@/types/auth.type';
 import { AxiosError } from 'axios';
@@ -9,7 +9,7 @@ const validateEmail = <T extends SignInFormState | SignUpFormState>(
   formState: T
 ) => {
   if (!emailPattern.test(formState.email)) {
-    formState.error = formState.email
+    formState.validationError = formState.email
       ? 'Email should be yourmail@example.com'
       : 'Email is required';
     formState.email = '';
@@ -22,7 +22,7 @@ const validatePassword = <T extends SignInFormState | SignUpFormState>(
   formState: T
 ) => {
   if (formState.password.length < 8) {
-    formState.error = formState.password
+    formState.validationError = formState.password
       ? 'Password should be at least 8 characters long'
       : 'Password is required';
     formState.password = '';
@@ -33,19 +33,17 @@ const validatePassword = <T extends SignInFormState | SignUpFormState>(
 
 const validateConfirm = (formState: SignUpFormState) => {
   if (formState.confirm !== formState.password) {
-    formState.error = 'Passwords must be equal';
+    formState.validationError = 'Passwords must be equal';
     formState.confirm = '';
   }
 
   return formState;
 };
 
-export const signupAction = async (
+export const signUpAction = async (
   prevState: SignUpFormState,
   formData: FormData
 ) => {
-  const submitted = Object.fromEntries(formData);
-
   if (formData.get('back') === 'email') {
     return { ...prevState, email: '', password: '' };
   }
@@ -53,13 +51,19 @@ export const signupAction = async (
     return { ...prevState, password: '', confirm: '' };
   }
 
-  let newState = { ...prevState, ...submitted };
+  const submitted = Object.fromEntries(formData);
 
-  newState.error = null;
+  let newState = {
+    ...prevState,
+    ...submitted,
+    validationError: null,
+    apiErrors: null,
+  } as SignUpFormState;
+
   if ('email' in submitted) newState = validateEmail(newState);
   if ('password' in submitted) newState = validatePassword(newState);
   if ('confirm' in submitted) newState = validateConfirm(newState);
-  if (newState.error) return newState;
+  if (newState.validationError) return newState;
 
   const isComplete = newState.email && newState.password && newState.confirm;
 
@@ -70,14 +74,14 @@ export const signupAction = async (
         password: newState.password,
       });
 
-      return { ...initSignUp, response: { user } };
+      newState = { ...initSignUp, user };
     } catch (error) {
       if (error instanceof AxiosError) {
-        newState.response.errors = error.response?.data.message.split('\n');
-      }
-
-      if (error instanceof Error) {
-        newState.response.errors = [error.message];
+        const apiErrors = error.response?.data.message.split('\n');
+        newState = { ...initSignUp, apiErrors };
+      } else if (error instanceof Error) {
+        const apiErrors = [error.message];
+        newState = { ...initSignUp, apiErrors };
       }
     }
   }
@@ -85,22 +89,25 @@ export const signupAction = async (
   return newState;
 };
 
-export const signinAction = async (
+export const signInAction = async (
   prevState: SignInFormState,
   formData: FormData
 ) => {
-  const submitted = Object.fromEntries(formData) as Partial<SignInFormState>;
-
   if (formData.get('back') === 'email') {
     return { ...prevState, email: '', password: '' };
   }
 
-  let newState = { ...prevState, ...submitted };
+  const submitted = Object.fromEntries(formData) as Partial<SignInFormState>;
 
-  newState.error = null;
+  let newState = {
+    ...prevState,
+    ...submitted,
+    validationError: null,
+    apiErrors: null,
+  } as SignInFormState;
+
   if ('email' in submitted) newState = validateEmail(newState);
-  if ('password' in submitted) newState = validatePassword(newState);
-  if (newState.error) return newState;
+  if (newState.validationError) return newState;
 
   const isComplete = newState.email && newState.password;
 
@@ -111,14 +118,14 @@ export const signinAction = async (
         password: newState.password,
       });
 
-      return { ...initSignUp, response: { user } };
+      newState = { ...initSignIn, user };
     } catch (error) {
       if (error instanceof AxiosError) {
-        newState.response.errors = error.response?.data.message.split('\n');
-      }
-
-      if (error instanceof Error) {
-        newState.response.errors = [error.message];
+        const apiErrors = error.response?.data.message.split('\n');
+        newState = { ...initSignIn, apiErrors };
+      } else if (error instanceof Error) {
+        const apiErrors = [error.message];
+        newState = { ...initSignIn, apiErrors };
       }
     }
   }

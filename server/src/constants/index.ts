@@ -19,7 +19,9 @@ export enum ErrorMessages {
 }
 
 export enum SuccesMessages {
-  SIGN_UP = 'Successfully registered new user',
+  SIGN_UP = 'New user created with success',
+  SIGN_IN = 'User found with success',
+  SIGN_OUT = 'User logged out with success',
 }
 
 export { countryExData } from './country_list';

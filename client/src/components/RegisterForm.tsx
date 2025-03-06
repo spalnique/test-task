@@ -1,4 +1,4 @@
-import { signupAction } from '@/app/actions/auth';
+import { signUpAction } from '@/app/actions/auth';
 import { initSignUp } from '@/constants/auth';
 import { Form } from '@heroui/react';
 import { redirect } from 'next/navigation';
@@ -12,59 +12,16 @@ import HaveAnAccount from './HaveAnAccount';
 import SubmitButton from './SubmitButton';
 
 export default function RegisterForm() {
-  const defaultValues = useRef(initSignUp);
+  const persistedValuesRef = useRef(initSignUp);
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>(null);
 
-  const [state, action, pending] = useActionState(signupAction, initSignUp);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    defaultValues.current = { ...state };
-
-    if (state.error) setErrorMessage(state.error);
-
-    inputRef.current?.focus();
-  }, [state]);
-
-  useEffect(() => {
-    if (state.response.user) {
-      toast.success('Welcome to the club!');
-      timeoutRef.current = setTimeout(() => redirect('/form-alt'), 3000);
-    }
-
-    if (state.response.errors) {
-      state.response.errors.forEach((message) => toast.error(message));
-    }
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, [state]);
-
-  const handleValueChange = () => {
-    if (errorMessage) setErrorMessage(null);
-  };
-
-  const backAction = async (formData: FormData) => {
-    setErrorMessage(null);
-
-    formData.set('back', isPassword ? 'email' : 'password');
-
-    action(formData);
-  };
+  const [state, action, pending] = useActionState(signUpAction, initSignUp);
 
   const isEmail = !state.email;
   const isPassword = !isEmail && !state.password;
-
-  const buttonLabel = pending
-    ? 'Submitting...'
-    : isEmail
-      ? 'Continue with email'
-      : isPassword
-        ? 'Next'
-        : 'Sign up';
 
   const name = isEmail ? 'email' : isPassword ? 'password' : 'confirm';
   const type = isEmail ? 'text' : 'password';
@@ -75,30 +32,88 @@ export default function RegisterForm() {
       ? 'Choose password'
       : 'Confirm password';
 
+  const buttonLabel = pending
+    ? 'Submitting...'
+    : isEmail
+      ? 'Continue with email'
+      : isPassword
+        ? 'Next'
+        : 'Sign up';
+
   const defaultValue = isEmail
-    ? defaultValues.current.email
+    ? persistedValuesRef.current.email
     : isPassword
-      ? defaultValues.current.password
-      : defaultValues.current.confirm;
+      ? persistedValuesRef.current.password
+      : persistedValuesRef.current.confirm;
+
+  const cleanUpUseEffectCb = () => () => {
+    toast.dismiss();
+    inputRef.current = null;
+    timeoutRef.current = null;
+  };
+
+  const errorsUseEffectCb = () => {
+    persistedValuesRef.current = { ...state };
+
+    const { validationError, apiErrors } = state;
+
+    if (validationError) setValidationError(validationError);
+    if (apiErrors) apiErrors.forEach((message) => toast.error(message));
+
+    inputRef.current?.focus();
+  };
+
+  const successUseEffectCb = () => {
+    if (state.user) {
+      toast.success(`Welcome to the club, ${state.user.email}!`);
+      timeoutRef.current = setTimeout(() => {
+        toast.dismiss();
+        redirect('/form-alt');
+      }, 2000);
+    }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  };
+
+  const handleResetErrorOnInput = () => {
+    toast.dismiss();
+    if (validationError) setValidationError(null);
+  };
+
+  const handleBackButtonAction = async (formData: FormData) => {
+    toast.dismiss();
+    setValidationError(null);
+
+    formData.set('back', isPassword ? 'email' : 'password');
+    action(formData);
+  };
+
+  useEffect(errorsUseEffectCb, [state]);
+  useEffect(successUseEffectCb, [state]);
+  useEffect(cleanUpUseEffectCb, []);
 
   return (
     <Form className="flex h-full flex-col items-center gap-8" action={action}>
       <FormTitle title="Sign up" />
       <FormInput
-        key={defaultValue}
+        key={state.user?.email}
         ref={inputRef}
         name={name}
         type={type}
         label={label}
         defaultValue={defaultValue}
-        onValueChange={handleValueChange}
-        isInvalid={!!errorMessage}
-        errorMessage={errorMessage}
+        onValueChange={handleResetErrorOnInput}
+        isInvalid={!!validationError}
+        errorMessage={validationError}
       />
 
       <div className="flex w-full flex-row-reverse gap-5">
-        <SubmitButton label={buttonLabel} isDisabled={!!errorMessage} />
-        {!isEmail && <BackButton label="<" formAction={backAction} />}
+        <SubmitButton label={buttonLabel} isDisabled={!!validationError} />
+        {!isEmail && (
+          <BackButton label="<" formAction={handleBackButtonAction} />
+        )}
       </div>
       <HaveAnAccount />
     </Form>

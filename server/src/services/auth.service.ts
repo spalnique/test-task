@@ -25,6 +25,10 @@ export class AuthService {
 
     return user;
   }
+
+  async terminateSession(_sessionId?: string) {
+    return 'terminated';
+  }
 }
 
 export const authService = new AuthService();

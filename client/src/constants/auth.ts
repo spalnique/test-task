@@ -4,15 +4,17 @@ const initSignUp: SignUpFormState = {
   email: '',
   password: '',
   confirm: '',
-  error: null,
-  response: { user: null },
+  validationError: null,
+  user: null,
+  apiErrors: null,
 };
 
 const initSignIn: SignInFormState = {
   email: '',
   password: '',
-  error: null,
-  response: { user: null },
+  validationError: null,
+  user: null,
+  apiErrors: null,
 };
 
 const emailPattern = /^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+$/;

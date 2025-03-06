@@ -23,4 +23,4 @@ export const signInUser = async (payload: UserAuthBody) => {
   return data;
 };
 
-export const signOutUser = async () => authAPI.post('/signout');
+export const signOutUser = async () => await authAPI.get('/signout');
