@@ -49,6 +49,7 @@ export default function RegisterForm() {
   const onUnmountEffects = () => () => {
     toast.dismiss();
     inputRef.current = null;
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = null;
   };
 
@@ -71,10 +72,6 @@ export default function RegisterForm() {
         redirect('/form-alt');
       }, 2000);
     }
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
   };
 
   const handleResetErrorOnInput = () => {
