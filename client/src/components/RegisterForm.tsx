@@ -46,13 +46,13 @@ export default function RegisterForm() {
       ? persistedValuesRef.current.password
       : persistedValuesRef.current.confirm;
 
-  const cleanUpUseEffectCb = () => () => {
+  const onUnmountEffects = () => () => {
     toast.dismiss();
     inputRef.current = null;
     timeoutRef.current = null;
   };
 
-  const errorsUseEffectCb = () => {
+  const onErrorEffects = () => {
     persistedValuesRef.current = { ...state };
 
     const { validationError, apiErrors } = state;
@@ -63,7 +63,7 @@ export default function RegisterForm() {
     inputRef.current?.focus();
   };
 
-  const successUseEffectCb = () => {
+  const onSuccessEffects = () => {
     if (state.user) {
       toast.success(`Welcome to the club, ${state.user.email}!`);
       timeoutRef.current = setTimeout(() => {
@@ -90,9 +90,9 @@ export default function RegisterForm() {
     action(formData);
   };
 
-  useEffect(errorsUseEffectCb, [state]);
-  useEffect(successUseEffectCb, [state]);
-  useEffect(cleanUpUseEffectCb, []);
+  useEffect(onErrorEffects, [state]);
+  useEffect(onSuccessEffects, [state]);
+  useEffect(onUnmountEffects, []);
 
   return (
     <Form className="flex h-full flex-col items-center gap-8" action={action}>
